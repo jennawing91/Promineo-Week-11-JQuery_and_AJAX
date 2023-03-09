@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Notes</title>
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/mvp.css@1.12/mvp.css" />
+  </head>
+  <div id="root"></div>
+  <input id="firstName" placeholder="First Name" />
+  <input id="lastName" placeholder="Last Name" />
+  <input id="role" placeholder="Role" />
+  <input id="yearJoined" placeholder="Year Joined" />
+  <button onclick="addMember()">Add</button>
+  <script>
+    async function addMember() {
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
+      const role = document.getElementById("role").value;
+      const yearJoined = document.getElementById("yearJoined").value;
+  ​
+      const newMember = {
+        firstName,
+        lastName,
+        role,
+        yearJoined,
+      };
+  ​
+      // tableRows.push(newMember);
+  ​
+      const fetchOptions = {
+        method: "POST",
+        body: JSON.stringify(newMember),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+  ​
+      fetch("http://localhost:5000/divers", fetchOptions);
+      populateTable();
+    }
+  ​
+    function clearTable() {
+      while (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.firstChild);
+      }
+    }
+  ​
+    function handlePromise(eventualResult) {
+      console.log(eventualResult);
+    }
+  ​
+    async function populateTable() {
+      // promises
+      // async / await -> blocking
+      // .then -> do something later
+  ​
+      const response = await fetch("http://localhost:5000/divers");
+      const tableRows = await response.json();
+  ​
+      clearTable();
+  ​
+      const headerRow = document.createElement("tr");
+      for (const header of tableHeaders) {
+        const cell = document.createElement("td");
+        const text = document.createTextNode(header);
+        cell.appendChild(text);
+        headerRow.appendChild(cell);
+      }
+      tableBody.appendChild(headerRow);
+  ​
+      // for each member, make a row
+      for (const member of tableRows) {
+        const row = document.createElement("tr");
+        const values = Object.values(member);
+        for (const value of values) {
+          const cell = document.createElement("td");
+          const text = document.createTextNode(value);
+          cell.appendChild(text);
+          row.appendChild(cell);
+        }
+        tableBody.appendChild(row);
+      }
+    }
+  ​
+    const tableHeaders = ["First Name", "Last Name", "Role", "Year Joined"];
+  ​
+    // let tableRows = [
+    //   {
+    //     firstName: "James",
+    //     lastName: "Dunkle",
+    //     role: "President/Founder",
+    //     yearJoined: 2010,
+    //   },
+    //   {
+    //     firstName: "Steve",
+    //     lastName: "Deaton",
+    //     role: "Director",
+    //     yearJoined: 2002,
+    //   },
+    //   {
+    //     firstName: "Eric",
+    //     lastName: "Robertson",
+    //     role: "Public Liason/diver",
+    //     yearJoined: 2007,
+    //   },
+    // ];
+  ​
+    const table = document.createElement("table");
+    const tableBody = document.createElement("tbody");
+  ​
+    populateTable(tableBody);
+  ​
+    table.appendChild(tableBody);
+    const root = document.getElementById("root");
+    root.appendChild(table);
+  </script>
+  Collapse
+  
+  
